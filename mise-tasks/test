@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#MISE description="Run plugin tests - install and execute tool"
+set -euo pipefail
+
+mise plugin link --force llamacpp .
+mise cache clear
+mise install llamacpp@b4479
+
+output=$(mise exec "llamacpp@b4479" -- "llama-cli" --version)
+echo "llama-cli output: $output"
+
+if echo "$output" | grep -qi 'llama'; then
+    echo "✓ Tests passed"
+else
+    echo "✗ Test failed: expected llama in version output"
+    exit 1
+fi
